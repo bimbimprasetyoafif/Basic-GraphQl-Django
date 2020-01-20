@@ -27,7 +27,7 @@ class CreatePostingan(graphene.Mutation):
             judul = posting.judul,
             isi = posting.isi
         )
-
+        
 class UpdatePostingan(graphene.Mutation):
     id = graphene.Int()
     judul = graphene.String()
