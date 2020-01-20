@@ -50,9 +50,26 @@ class UpdatePostingan(graphene.Mutation):
             isi = posting.isi
         )
 
+class DeletePostingan(graphene.Mutation):
+    ok = graphene.Boolean()
+
+    class Arguments:
+        id = graphene.Int()
+    
+    def mutate(self,info,id):
+        try:
+            posting = Postingan.objects.get(pk=id)
+            posting.delete()
+            ok = True
+        except:
+            ok = False
+
+        return DeletePostingan(ok)
+
 class Mutation(object):
     tambah_postingan = CreatePostingan.Field()
     update_postingan = UpdatePostingan.Field()
+    delete_postingan = DeletePostingan.Field()
 
 class Query(object):
     semua_postingan = graphene.List(PostinganType)
