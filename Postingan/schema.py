@@ -28,8 +28,31 @@ class CreatePostingan(graphene.Mutation):
             isi = posting.isi
         )
 
+class UpdatePostingan(graphene.Mutation):
+    id = graphene.Int()
+    judul = graphene.String()
+    isi = graphene.String()
+
+    class Arguments:
+        id = graphene.Int()
+        judul = graphene.String()
+        isi = graphene.String()
+    
+    def mutate(self,info,id,judul,isi):
+        posting = Postingan.objects.get(pk=id)
+        posting.judul = judul
+        posting.isi = isi
+        posting.save()
+
+        return UpdatePostingan(
+            id = posting.id,
+            judul = posting.judul,
+            isi = posting.isi
+        )
+
 class Mutation(object):
     tambah_postingan = CreatePostingan.Field()
+    update_postingan = UpdatePostingan.Field()
 
 class Query(object):
     semua_postingan = graphene.List(PostinganType)
