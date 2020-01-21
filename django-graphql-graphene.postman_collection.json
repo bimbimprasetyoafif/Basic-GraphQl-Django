@@ -1,0 +1,40 @@
+{
+	"info": {
+		"_postman_id": "35c3516d-bd95-4b46-92d5-cc07e7787d35",
+		"name": "django-graphql-graphene",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GraphQl Django",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "# query{\n#   semuaPostingan{\n#     id\n#     judul\n#     isi\n#   }\n# }\n\n# mutation{\n#   tambahPostingan(judul:\"Berita Keempat new\", isi:\"ini lewat mutasi\"){\n#     id\n#     judul\n#     isi\n#   }\n# }\n\n# mutation{\n#   updatePostingan(id:4,judul:\"Berita Keempat update\", isi:\"update ini lewat mutasi\"){\n#     id\n#     judul\n#     isi\n#   }\n# }\n\n# mutation{\n#   deletePostingan(id:4){\n#     ok\n#   }\n# }\n\n# mutation{\n#   createUser(email:\"bimo4@bimo.com\", username:\"bimo4\",password:\"bimoganteng\"){\n#     user{\n#       id\n#       username\n#       email\n#     }\n#   }\n# }\n\n# query{\n#   userType{\n#     id\n#     username\n#     email\n#   }\n# }\n\n# mutation{\n#   tokenAuth(username:\"bimo\",password:\"bimoganteng\"){\n#     token\n#   }\n# }\n\n# mutation{\n#   verifyToken(token:\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImJpbW8iLCJleHAiOjE1Nzk2MDQxMzEsIm9yaWdJYXQiOjE1Nzk2MDM4MzF9.0q32LaQgMcG1DahUDQj7-JJRuq3z8bbwPeKF8kahXKA\"){\n#     payload\n#   }\n# }",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/graphql/",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"graphql",
+						""
+					]
+				},
+				"description": "query and mutation"
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

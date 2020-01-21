@@ -75,4 +75,7 @@ class Query(object):
     semua_postingan = graphene.List(PostinganType)
 
     def resolve_semua_postingan(self,info,**kwargs):
+        user = info.context.user
+        if user.is_anonymous:
+            raise Exception('Not logged in')
         return Postingan.objects.all()
