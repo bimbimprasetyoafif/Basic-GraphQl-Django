@@ -1,81 +1,78 @@
 import graphene
 from graphene_django.types import DjangoObjectType
+from graphene_django.filter import DjangoFilterConnectionField
 from .models import Postingan
 
 class PostinganType(DjangoObjectType):
     class Meta:
         model = Postingan
+        filter_fields = ('id','judul')
+        interfaces = (graphene.relay.Node,)
 
-class CreatePostingan(graphene.Mutation):
-    id = graphene.Int()
-    judul = graphene.String()
-    isi = graphene.String()
-
-    class Arguments:
+class CreatePostingan(graphene.relay.ClientIDMutation):
+    post = graphene.Field(PostinganType)
+    class Input:
         judul = graphene.String()
         isi = graphene.String()
     
-    def mutate(self,info,judul,isi):
-        posting = Postingan(
-            judul = judul,
-            isi = isi
-        )
-        posting.save()
+    @classmethod
+    def mutate_and_get_payload(self, root, info, **input):
+        judul = input.get('judul')
+        isi = input.get('isi')
 
-        return CreatePostingan(
-            id = posting.id,
-            judul = posting.judul,
-            isi = posting.isi
+        postingan = Postingan(
+            judul=judul,
+            isi=isi
         )
+        postingan.save()
+
+        return CreatePostingan(post = postingan)
         
-class UpdatePostingan(graphene.Mutation):
-    id = graphene.Int()
-    judul = graphene.String()
-    isi = graphene.String()
-
-    class Arguments:
-        id = graphene.Int()
+class UpdatePostingan(graphene.relay.ClientIDMutation):
+    post = graphene.Field(PostinganType)
+    class Input:
+        id = graphene.String()
         judul = graphene.String()
         isi = graphene.String()
     
-    def mutate(self,info,id,judul,isi):
-        posting = Postingan.objects.get(pk=id)
-        posting.judul = judul
-        posting.isi = isi
-        posting.save()
+    @classmethod
+    def mutate_and_get_payload(self, root, info, **input):
+        judul = input.get('judul')
+        isi = input.get('isi')
+        id = input.get('id')
+        id = graphene.relay.Node.from_global_id(id)[1]
 
-        return UpdatePostingan(
-            id = posting.id,
-            judul = posting.judul,
-            isi = posting.isi
-        )
+        postingan = Postingan.objects.get(id=id)
+        postingan.judul = judul
+        postingan.isi = isi
+        postingan.save()
 
-class DeletePostingan(graphene.Mutation):
+        return UpdatePostingan(post = postingan)
+
+class DeletePostingan(graphene.relay.ClientIDMutation):
+    post = graphene.Field(PostinganType)
     ok = graphene.Boolean()
-
-    class Arguments:
-        id = graphene.Int()
+    ok = False
+    class Input:
+        id = graphene.String()
     
-    def mutate(self,info,id):
+    @classmethod
+    def mutate_and_get_payload(self, root, info, **input):
+        id = input.get('id')
+        id = graphene.relay.Node.from_global_id(id)[1]
         try:
-            posting = Postingan.objects.get(pk=id)
-            posting.delete()
-            ok = True
+            postingan = Postingan.objects.get(id=id)
+            postingan.delete()
+            this.ok = True
+            return DeletePostingan(ok)
         except:
-            ok = False
+            return DeletePostingan(ok)
 
-        return DeletePostingan(ok)
-
-class Mutation(object):
+class RelayMutation(graphene.AbstractType):
     tambah_postingan = CreatePostingan.Field()
     update_postingan = UpdatePostingan.Field()
     delete_postingan = DeletePostingan.Field()
 
 class Query(object):
-    semua_postingan = graphene.List(PostinganType)
-
-    def resolve_semua_postingan(self,info,**kwargs):
-        user = info.context.user
-        if user.is_anonymous:
-            raise Exception('Not logged in')
-        return Postingan.objects.all()
+    postingan = graphene.relay.Node.Field(PostinganType)
+    semua_postingan = DjangoFilterConnectionField(PostinganType)
